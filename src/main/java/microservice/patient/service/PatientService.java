@@ -2,11 +2,11 @@ package microservice.patient.service;
 
 import jakarta.validation.Valid;
 import microservice.patient.dto.*;
-//import microservice.patient.entity.Patient;
-//import microservice.patient.entity.Patient.StatutPatientEnum;
-//import microservice.patient.exception.PatientNotFoundException;
-//import microservice.patient.exception.DuplicatePatientException;
 import microservice.patient.entity.Patient;
+import microservice.patient.entity.Patient.StatutPatientEnum;
+import microservice.patient.exception.PatientNotFoundException;
+import microservice.patient.exception.DuplicatePatientException;
+import microservice.patient.exception.PatientNotFoundException;
 import microservice.patient.mapper.PatientMapper;
 import microservice.patient.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +54,7 @@ public class PatientService {
         Patient savedPatient = patientRepository.save(patient);
         log.info("Patient créé avec l'ID: {} et le numéro: {}", savedPatient.getId(), savedPatient.getNumeroPatient());
 
-        return patientMapper.toResponseDto(savedPatient);
+        return patientMapper.toResponseDTO(savedPatient);
     }
 
     @Transactional
@@ -64,30 +64,30 @@ public class PatientService {
         Patient existingPatient = findPatientById(id);
         validateUniqueFieldsForUpdate(updateDto, id);
 
-        patientMapper.updateEntityFromDto(updateDto, existingPatient);
+        patientMapper.updateEntityFromDTO(updateDto, existingPatient);
         existingPatient.setUpdatedAt(LocalDateTime.now());
 
         Patient updatedPatient = patientRepository.save(existingPatient);
         log.info("Patient mis à jour: {}", updatedPatient.getNumeroPatient());
 
-        return patientMapper.toResponseDto(updatedPatient);
+        return patientMapper.toResponseDTO(updatedPatient);
     }
 
     public PatientResponseDto getPatientById(Long id) {
         Patient patient = findPatientById(id);
-        return patientMapper.toResponseDto(patient);
+        return patientMapper.toResponseDTO(patient);
     }
 
     public PatientResponseDto getPatientByUuid(String uuid) {
         Patient patient = patientRepository.findActiveByUuid(uuid)
                 .orElseThrow(() -> new PatientNotFoundException("Patient non trouvé avec UUID: " + uuid));
-        return patientMapper.toResponseDto(patient);
+        return patientMapper.toResponseDTO(patient);
     }
 
     public PatientResponseDto getPatientByNumero(String numeroPatient) {
         Patient patient = patientRepository.findActiveByNumeroPatient(numeroPatient)
                 .orElseThrow(() -> new PatientNotFoundException("Patient non trouvé avec le numéro: " + numeroPatient));
-        return patientMapper.toResponseDto(patient);
+        return patientMapper.toResponseDTO(patient);
     }
 
     @Transactional
@@ -126,7 +126,7 @@ public class PatientService {
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Patient> patients = patientRepository.findByIsActiveTrueOrderByCreatedAtDesc(pageable);
 
-        return patients.map(patientMapper::toResponseDto);
+        return patients.map(patientMapper::toResponseDTO);
     }
 
     public Page<PatientResponseDto> searchPatients(String query, int page, int size) {
@@ -139,10 +139,10 @@ public class PatientService {
             patients = patientRepository.findByIsActiveTrueOrderByCreatedAtDesc(pageable);
         }
 
-        return patients.map(patientMapper::toResponseDto);
+        return patients.map(patientMapper::toResponseDTO);
     }
 
-    public Page<PatientResponseDto> searchPatientsWithFilters(PatientSearchDto searchDto) {
+    /*public Page<PatientResponseDto> searchPatientsWithFilters(PatientSearchDto searchDto) {
         Pageable pageable = PageRequest.of(
                 searchDto.getPage(),
                 searchDto.getSize(),
@@ -157,22 +157,22 @@ public class PatientService {
                 pageable
         );
 
-        return patients.map(patientMapper::toResponseDto);
-    }
+        return patients.map(patientMapper::toResponseDTO);
+    }*/
 
     public List<PatientResponseDto> getPatientsByAgeRange(int ageMin, int ageMax) {
         List<Patient> patients = patientRepository.findByAgeRangeInYears(ageMin, ageMax);
         return patients.stream()
-                .map(patientMapper::toResponseDto)
+                .map(patientMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    public List<PatientResponseDto> getPatientsByMedecin(String medecinReferent) {
+/*    public List<PatientResponseDto> getPatientsByMedecin(String medecinReferent) {
         List<Patient> patients = patientRepository.findByMedecinReferentAndIsActiveTrueOrderByNomAsc(medecinReferent);
         return patients.stream()
-                .map(patientMapper::toResponseDto)
+                .map(patientMapper::toResponseDTO)
                 .collect(Collectors.toList());
-    }
+    }*/
 
     // ========== STATISTIQUES ==========
 
@@ -192,13 +192,13 @@ public class PatientService {
         stats.setPatientsByType(patientsByType);
 
         // Statistiques par statut
-        List<Object[]> statusStats = patientRepository.countPatientsByStatus();
+        /*List<Object[]> statusStats = patientRepository.countPatientsByStatus();
         Map<String, Long> patientsByStatus = statusStats.stream()
                 .collect(Collectors.toMap(
                         obj -> obj[0].toString(),
                         obj -> (Long) obj[1]
                 ));
-        stats.setPatientsByStatus(patientsByStatus);
+        stats.setPatientsByStatus(patientsByStatus);*/
 
         // Statistiques par genre
         List<Object[]> genderStats = patientRepository.countPatientsByGender();
@@ -271,20 +271,20 @@ public class PatientService {
         Patient updatedPatient = patientRepository.save(patient);
         log.info("Statut du patient {} mis à jour vers: {}", patient.getNumeroPatient(), newStatus);
 
-        return patientMapper.toResponseDto(updatedPatient);
+        return patientMapper.toResponseDTO(updatedPatient);
     }
 
-    public List<PatientResponseDto> getPatientsWithUpcomingAppointments(LocalDateTime startDate, LocalDateTime endDate) {
+    /*  public List<PatientResponseDto> getPatientsWithUpcomingAppointments(LocalDateTime startDate, LocalDateTime endDate) {
         List<Patient> patients = patientRepository.findPatientsWithAppointmentsBetween(startDate, endDate);
         return patients.stream()
-                .map(patientMapper::toResponseDto)
+                .map(patientMapper::toResponseDTO)
                 .collect(Collectors.toList());
-    }
+    }*/
 
     public List<PatientResponseDto> getNewPatientsByPeriod(LocalDateTime startDate, LocalDateTime endDate) {
         List<Patient> patients = patientRepository.findByCreationDateRange(startDate, endDate);
         return patients.stream()
-                .map(patientMapper::toResponseDto)
+                .map(patientMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 

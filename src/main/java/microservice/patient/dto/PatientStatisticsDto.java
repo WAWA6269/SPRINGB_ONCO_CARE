@@ -14,6 +14,8 @@ public class PatientStatisticsDto {
     private Long patientsSupprimes;
     private Long nouveauxPatientsCeMois;
     private Long nouveauxPatientsAnneeEnCours;
+    private Long totalActivePatients;
+    private Long totalInactivePatients;
 
     // Répartition par sexe
     private Long nombreHommes;
@@ -32,9 +34,14 @@ public class PatientStatisticsDto {
 
     // Répartition par type de patient
     private Map<String, Long> repartitionParTypePatient;
+    private Map<String, Long> patientsByType;
 
     // Répartition par groupe sanguin
     private Map<String, Long> repartitionParGroupeSanguin;
+
+    // Répartitions génériques
+    private Map<String, Long> patientsByStatus;
+    private Map<String, Long> patientsByGender;
 
     // Statistiques médicales
     private Long patientsAvecAssurance;
@@ -68,6 +75,8 @@ public class PatientStatisticsDto {
     private List<TopStatistic> topVilles;
     private List<TopStatistic> topMedecinsReferents;
     private List<TopStatistic> topAssurances;
+
+
 
     // Classe interne pour les statistiques "top"
     public static class TopStatistic {
@@ -158,6 +167,22 @@ public class PatientStatisticsDto {
         this.nouveauxPatientsAnneeEnCours = nouveauxPatientsAnneeEnCours;
     }
 
+    public Long getTotalActivePatients() {
+        return totalActivePatients;
+    }
+
+    public void setTotalActivePatients(Long totalActivePatients) {
+        this.totalActivePatients = totalActivePatients;
+    }
+
+    public Long getTotalInactivePatients() {
+        return totalInactivePatients;
+    }
+
+    public void setTotalInactivePatients(Long totalInactivePatients) {
+        this.totalInactivePatients = totalInactivePatients;
+    }
+
     public Long getNombreHommes() {
         return nombreHommes;
     }
@@ -222,12 +247,36 @@ public class PatientStatisticsDto {
         this.repartitionParTypePatient = repartitionParTypePatient;
     }
 
+    public Map<String, Long> getPatientsByType() {
+        return patientsByType;
+    }
+
+    public void setPatientsByType(Map<String, Long> patientsByType) {
+        this.patientsByType = patientsByType;
+    }
+
     public Map<String, Long> getRepartitionParGroupeSanguin() {
         return repartitionParGroupeSanguin;
     }
 
     public void setRepartitionParGroupeSanguin(Map<String, Long> repartitionParGroupeSanguin) {
         this.repartitionParGroupeSanguin = repartitionParGroupeSanguin;
+    }
+
+    public Map<String, Long> getPatientsByStatus() {
+        return patientsByStatus;
+    }
+
+    public void setPatientsByStatus(Map<String, Long> patientsByStatus) {
+        this.patientsByStatus = patientsByStatus;
+    }
+
+    public Map<String, Long> getPatientsByGender() {
+        return patientsByGender;
+    }
+
+    public void setPatientsByGender(Map<String, Long> patientsByGender) {
+        this.patientsByGender = patientsByGender;
     }
 
     public Long getPatientsAvecAssurance() {

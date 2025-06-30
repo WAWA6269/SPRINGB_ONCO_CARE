@@ -109,9 +109,9 @@ public class Patient {
     @NotNull(message = "Le type de patient est obligatoire")
     private TypePatientEnum typePatient;
 
-/*    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     @Column(name = "statut")
-    private StatutPatientEnum statut = StatutPatientEnum.ACTIF;*/
+    private StatutPatientEnum statut = StatutPatientEnum.ACTIF;
 
     @Column(name = "date_premier_diagnostic")
     private LocalDate datePremierDiagnostic;
@@ -213,13 +213,150 @@ public class Patient {
         DIAGNOSTIC,
         DIAGNOSTIQUE,
         TRAITEMENT
-    }//IL y a une enumération similaire dan le patientservice
+    } //IL y a une enumération similaire dan le patientservice
 
 
 
     // Constructeurs, getters et setters
-    public Patient() {}
+    public Patient(String nom, String prenom, LocalDate dateNaissance, SexeEnum sexe, TypePatientEnum typePatient) {
+        this.nom = nom;
+        this.prenom = prenom;
+        this.dateNaissance = dateNaissance;
+        this.sexe = sexe;
+        this.typePatient = typePatient;
+        this.uuid = UUID.randomUUID().toString();
+        this.isActive = true;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 
+    // Constructeur surchargé avec plus de paramètres
+    public Patient(String nom,
+                   String prenom,
+                   LocalDate dateNaissance,
+                   SexeEnum sexe,
+                   TypePatientEnum typePatient,
+                   String telephone,
+                   String email,
+                   String medecinReferent) {
+        this(nom, prenom, dateNaissance, sexe, typePatient); // Appel du constructeur principal
+        this.telephone = telephone;
+        this.email = email;
+        this.medecinReferent = medecinReferent;
+    }
+
+    // Constructeur par défaut (déjà présent dans votre code)
+    public Patient() {
+        this.uuid = UUID.randomUUID().toString();
+        this.isActive = true;
+    }
     // Getters et Setters (générés automatiquement par l'IDE)
+
+    // Getters et Setters basiques
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNumeroPatient() {
+        return numeroPatient;
+    }
+
+    public void setNumeroPatient(String numeroPatient) {
+        this.numeroPatient = numeroPatient;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    public String getMedecinReferent() {
+        return medecinReferent;
+    }
+
+    public void setMedecinReferent(String medecinReferent) {
+        this.medecinReferent = medecinReferent;
+    }
+
+    public StatutPatientEnum getStatut() {
+        return statut;
+    }
+
+    public void setStatut(StatutPatientEnum statut) {
+        this.statut = statut;
+    }
+
+    public TypePatientEnum getTypePatient() {
+        return typePatient;
+    }
+
+    public void setTypePatient(TypePatientEnum typePatient) {
+        this.typePatient = typePatient;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    // Ajout de l'énumération StatutPatientEnum qui était commentée
+    public enum StatutPatientEnum {
+        ACTIF,
+        INACTIF,
+        EN_TRAITEMENT,
+        REMISSION,
+        DECEDE
+    }
+
     // ... (tous les getters et setters pour chaque champ)
 }
