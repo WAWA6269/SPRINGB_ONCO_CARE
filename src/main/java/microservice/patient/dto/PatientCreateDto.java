@@ -14,8 +14,8 @@ public class PatientCreateDto {
     @Size(max = 100, message = "Le prénom ne peut pas dépasser 100 caractères")
     private String prenom;
 
-    @Size(max = 100, message = "Le nom de jeune fille ne peut pas dépasser 100 caractères")
-    private String nomJeuneFille;
+    /*@Size(max = 100, message = "Le nom de jeune fille ne peut pas dépasser 100 caractères")
+    private String nomJeuneFille;*/
 
     @NotNull(message = "La date de naissance est obligatoire")
     @Past(message = "La date de naissance doit être dans le passé")
@@ -67,7 +67,7 @@ public class PatientCreateDto {
     @NotBlank(message = "Le type de patient est obligatoire")
     private String typePatient;
 
-    private LocalDate datePremierDiagnostic;
+    //private LocalDate datePremierDiagnostic;
 
     @Size(max = 100, message = "Le nom du contact ne peut pas dépasser 100 caractères")
     private String contactNom;
@@ -104,13 +104,13 @@ public class PatientCreateDto {
         this.prenom = prenom;
     }
 
-    public String getNomJeuneFille() {
+    /*public String getNomJeuneFille() {
         return nomJeuneFille;
     }
 
     public void setNomJeuneFille(String nomJeuneFille) {
         this.nomJeuneFille = nomJeuneFille;
-    }
+    }*/
 
     public LocalDate getDateNaissance() {
         return dateNaissance;
@@ -232,13 +232,13 @@ public class PatientCreateDto {
         this.typePatient = typePatient;
     }
 
-    public LocalDate getDatePremierDiagnostic() {
+    /*public LocalDate getDatePremierDiagnostic() {
         return datePremierDiagnostic;
     }
 
     public void setDatePremierDiagnostic(LocalDate datePremierDiagnostic) {
         this.datePremierDiagnostic = datePremierDiagnostic;
-    }
+    }*/
 
     public String getContactNom() {
         return contactNom;

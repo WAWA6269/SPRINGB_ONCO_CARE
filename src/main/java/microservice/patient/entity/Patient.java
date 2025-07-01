@@ -2,6 +2,7 @@ package microservice.patient.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -113,9 +114,6 @@ public class Patient {
     @Column(name = "statut")
     private StatutPatientEnum statut = StatutPatientEnum.ACTIF;
 
-    @Column(name = "date_premier_diagnostic")
-    private LocalDate datePremierDiagnostic;
-
     // Personne à contacter
     @Column(name = "contact_nom", length = 100)
     private String contactNom;
@@ -145,6 +143,7 @@ public class Patient {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Setter
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
@@ -154,42 +153,6 @@ public class Patient {
 
     @Column(name = "updated_by", length = 100)
     private String updatedBy;
-
-    // Méthodes calculées
-    public String getNomComplet() {
-        return prenom + " " + nom;
-    }
-
-    public int getAge() {
-        if (dateNaissance == null) {
-            return 0;
-        }
-        return Period.between(dateNaissance, LocalDate.now()).getYears();
-    }
-
-    public void calculerSurfaceCorporelle() {
-        if (poids != null && taille != null) {
-            // Formule de Dubois: SC = 0.007184 × Poids^0.425 × Taille^0.725
-            double sc = 0.007184 * Math.pow(poids.doubleValue(), 0.425) *
-                    Math.pow(taille.doubleValue(), 0.725);
-            this.surfaceCorporelle = BigDecimal.valueOf(sc).setScale(2, BigDecimal.ROUND_HALF_UP);
-        }
-    }
-
-    public void calculerImc() {
-        if (poids != null && taille != null) {
-            double tailleM = taille.doubleValue() / 100; // Conversion cm en m
-            double imcValue = poids.doubleValue() / (tailleM * tailleM);
-            this.imc = BigDecimal.valueOf(imcValue).setScale(2, BigDecimal.ROUND_HALF_UP);
-        }
-    }
-
-    @PrePersist
-    @PreUpdate
-    private void calculateValues() {
-        calculerSurfaceCorporelle();
-        calculerImc();
-    }
 
     // Enums
     public enum SexeEnum {
@@ -213,11 +176,22 @@ public class Patient {
         DIAGNOSTIC,
         DIAGNOSTIQUE,
         TRAITEMENT
-    } //IL y a une enumération similaire dan le patientservice
+    }
 
+    public enum StatutPatientEnum {
+        ACTIF,
+        INACTIF,
+        EN_TRAITEMENT,
+        REMISSION,
+        DECEDE
+    }
 
+    // Constructeurs
+    public Patient() {
+        this.uuid = UUID.randomUUID().toString();
+        this.isActive = true;
+    }
 
-    // Constructeurs, getters et setters
     public Patient(String nom, String prenom, LocalDate dateNaissance, SexeEnum sexe, TypePatientEnum typePatient) {
         this.nom = nom;
         this.prenom = prenom;
@@ -230,7 +204,6 @@ public class Patient {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Constructeur surchargé avec plus de paramètres
     public Patient(String nom,
                    String prenom,
                    LocalDate dateNaissance,
@@ -239,20 +212,48 @@ public class Patient {
                    String telephone,
                    String email,
                    String medecinReferent) {
-        this(nom, prenom, dateNaissance, sexe, typePatient); // Appel du constructeur principal
+        this(nom, prenom, dateNaissance, sexe, typePatient);
         this.telephone = telephone;
         this.email = email;
         this.medecinReferent = medecinReferent;
     }
 
-    // Constructeur par défaut (déjà présent dans votre code)
-    public Patient() {
-        this.uuid = UUID.randomUUID().toString();
-        this.isActive = true;
+    // Méthodes calculées
+    public String getNomComplet() {
+        return prenom + " " + nom;
     }
-    // Getters et Setters (générés automatiquement par l'IDE)
 
-    // Getters et Setters basiques
+    public int getAge() {
+        if (dateNaissance == null) {
+            return 0;
+        }
+        return Period.between(dateNaissance, LocalDate.now()).getYears();
+    }
+
+    public void calculerSurfaceCorporelle() {
+        if (poids != null && taille != null) {
+            double sc = 0.007184 * Math.pow(poids.doubleValue(), 0.425) *
+                    Math.pow(taille.doubleValue(), 0.725);
+            this.surfaceCorporelle = BigDecimal.valueOf(sc).setScale(2, BigDecimal.ROUND_HALF_UP);
+        }
+    }
+
+    public void calculerImc() {
+        if (poids != null && taille != null) {
+            double tailleM = taille.doubleValue() / 100;
+            double imcValue = poids.doubleValue() / (tailleM * tailleM);
+            this.imc = BigDecimal.valueOf(imcValue).setScale(2, BigDecimal.ROUND_HALF_UP);
+        }
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void calculateValues() {
+        calculerSurfaceCorporelle();
+        calculerImc();
+    }
+
+    // TOUS LES GETTERS ET SETTERS
     public Long getId() {
         return id;
     }
@@ -277,6 +278,214 @@ public class Patient {
         this.uuid = uuid;
     }
 
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
+    public String getNomJeuneFille() {
+        return nomJeuneFille;
+    }
+
+    public void setNomJeuneFille(String nomJeuneFille) {
+        this.nomJeuneFille = nomJeuneFille;
+    }
+
+    public LocalDate getDateNaissance() {
+        return dateNaissance;
+    }
+
+    public void setDateNaissance(LocalDate dateNaissance) {
+        this.dateNaissance = dateNaissance;
+    }
+
+    public String getLieuNaissance() {
+        return lieuNaissance;
+    }
+
+    public void setLieuNaissance(String lieuNaissance) {
+        this.lieuNaissance = lieuNaissance;
+    }
+
+    public SexeEnum getSexe() {
+        return sexe;
+    }
+
+    public void setSexe(SexeEnum sexe) {
+        this.sexe = sexe;
+    }
+
+    public String getNationalite() {
+        return nationalite;
+    }
+
+    public void setNationalite(String nationalite) {
+        this.nationalite = nationalite;
+    }
+
+    public String getAdresse() {
+        return adresse;
+    }
+
+    public void setAdresse(String adresse) {
+        this.adresse = adresse;
+    }
+
+    public String getVille() {
+        return ville;
+    }
+
+    public void setVille(String ville) {
+        this.ville = ville;
+    }
+
+    public String getCodePostal() {
+        return codePostal;
+    }
+
+    public void setCodePostal(String codePostal) {
+        this.codePostal = codePostal;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    public String getTelephoneUrgence() {
+        return telephoneUrgence;
+    }
+
+    public void setTelephoneUrgence(String telephoneUrgence) {
+        this.telephoneUrgence = telephoneUrgence;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public BigDecimal getSurfaceCorporelle() {
+        return surfaceCorporelle;
+    }
+
+    public void setSurfaceCorporelle(BigDecimal surfaceCorporelle) {
+        this.surfaceCorporelle = surfaceCorporelle;
+    }
+
+    public BigDecimal getPoids() {
+        return poids;
+    }
+
+    public void setPoids(BigDecimal poids) {
+        this.poids = poids;
+    }
+
+    public BigDecimal getTaille() {
+        return taille;
+    }
+
+    public void setTaille(BigDecimal taille) {
+        this.taille = taille;
+    }
+
+    public BigDecimal getImc() {
+        return imc;
+    }
+
+    public void setImc(BigDecimal imc) {
+        this.imc = imc;
+    }
+
+    public String getGroupeSanguin() {
+        return groupeSanguin;
+    }
+
+    public void setGroupeSanguin(String groupeSanguin) {
+        this.groupeSanguin = groupeSanguin;
+    }
+
+    public TypePatientEnum getTypePatient() {
+        return typePatient;
+    }
+
+    public void setTypePatient(TypePatientEnum typePatient) {
+        this.typePatient = typePatient;
+    }
+
+    public StatutPatientEnum getStatut() {
+        return statut;
+    }
+
+    public void setStatut(StatutPatientEnum statut) {
+        this.statut = statut;
+    }
+
+    public String getContactNom() {
+        return contactNom;
+    }
+
+    public void setContactNom(String contactNom) {
+        this.contactNom = contactNom;
+    }
+
+    public String getContactRelation() {
+        return contactRelation;
+    }
+
+    public void setContactRelation(String contactRelation) {
+        this.contactRelation = contactRelation;
+    }
+
+    public String getContactTelephone() {
+        return contactTelephone;
+    }
+
+    public void setContactTelephone(String contactTelephone) {
+        this.contactTelephone = contactTelephone;
+    }
+
+    public String getMedecinReferent() {
+        return medecinReferent;
+    }
+
+    public void setMedecinReferent(String medecinReferent) {
+        this.medecinReferent = medecinReferent;
+    }
+
+    public String getAssuranceNom() {
+        return assuranceNom;
+    }
+
+    public void setAssuranceNom(String assuranceNom) {
+        this.assuranceNom = assuranceNom;
+    }
+
+    public String getAssuranceNumero() {
+        return assuranceNumero;
+    }
+
+    public void setAssuranceNumero(String assuranceNumero) {
+        this.assuranceNumero = assuranceNumero;
+    }
+
     public Boolean getIsActive() {
         return isActive;
     }
@@ -297,66 +506,19 @@ public class Patient {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public String getCreatedBy() {
+        return createdBy;
     }
 
-    public String getEmail() {
-        return email;
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public String getUpdatedBy() {
+        return updatedBy;
     }
 
-    public String getTelephone() {
-        return telephone;
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
-
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
-    }
-
-    public String getMedecinReferent() {
-        return medecinReferent;
-    }
-
-    public void setMedecinReferent(String medecinReferent) {
-        this.medecinReferent = medecinReferent;
-    }
-
-    public StatutPatientEnum getStatut() {
-        return statut;
-    }
-
-    public void setStatut(StatutPatientEnum statut) {
-        this.statut = statut;
-    }
-
-    public TypePatientEnum getTypePatient() {
-        return typePatient;
-    }
-
-    public void setTypePatient(TypePatientEnum typePatient) {
-        this.typePatient = typePatient;
-    }
-
-    public String getNom() {
-        return nom;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    // Ajout de l'énumération StatutPatientEnum qui était commentée
-    public enum StatutPatientEnum {
-        ACTIF,
-        INACTIF,
-        EN_TRAITEMENT,
-        REMISSION,
-        DECEDE
-    }
-
-    // ... (tous les getters et setters pour chaque champ)
 }

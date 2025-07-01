@@ -302,4 +302,6 @@ public class PatientUpdateDto {
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
     }
+
+
 }

@@ -3,7 +3,7 @@ package microservice.patient.dto;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
-//import microservice.patient.entity.Patient.StatutPatientEnum;
+import microservice.patient.entity.Patient.StatutPatientEnum;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -43,7 +43,7 @@ public class PatientSearchDto {
 
     private String typePatient;
 
-    //private StatutPatientEnum statutPatient;
+    private StatutPatientEnum statutPatient;
 
     @Size(max = 100, message = "Le nom du médecin référent ne peut pas dépasser 100 caractères")
     private String medecinReferent;
@@ -189,13 +189,13 @@ public class PatientSearchDto {
         this.typePatient = typePatient;
     }
 
-    /*public StatutPatientEnum getStatutPatient() {
+    public StatutPatientEnum getStatutPatient() {
         return statutPatient;
     }
 
     public void setStatutPatient(StatutPatientEnum statutPatient) {
         this.statutPatient = statutPatient;
-    }*/
+    }
 
     public String getMedecinReferent() {
         return medecinReferent;
